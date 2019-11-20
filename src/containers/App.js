@@ -15,36 +15,54 @@ import { connect } from 'react-redux';
 import * as actionTypes from '../store/actions/actionTypes';
 import * as util from '../utils';
 import * as config from '../config';
+import Path from "../Path";
 
 class App extends PureComponent {
 
   render() {
-    // console.log("APP", this.props.usr);
 
-    let editArticlePage = <Route path={config.URL_HOME_PAGE+'/edit-article'} 
+    let editArticlePage = <Route
+      path={this.getMountedPageByPath(Path.EDIT_ARTICLE_PAGE)} 
       component={ArticleBuilder} />;
-    let newArticlePage = <Route path={config.URL_HOME_PAGE+'/new-article'} exact 
+    
+    let newArticlePage = <Route exact
+      path={this.getMountedPageByPath(Path.NEW_ARTICLE_PAGE)} 
       component={ArticleBuilder} />;
-    let editUsers = <Route path={config.URL_HOME_PAGE+'/user-editor'} exact 
+    
+    let editUsers = <Route exact 
+      path={this.getMountedPageByPath(Path.USER_EDITOR_PAGE)}
       component={UserManager} />;
-    let pictureManager = <Route path={config.URL_HOME_PAGE+'/picture-manager'} exact 
+    
+    let pictureManager = <Route exact 
+      path={this.getMountedPageByPath(Path.PICTURE_MANAGER_PAGE)}
       component={PictureManager} />;
-    let settings = <Route path={config.URL_HOME_PAGE+'/settings'} exact 
+    
+    let settings = <Route exact
+      path={this.getMountedPageByPath(Path.SETTINGS_PAGE)}
       component={Settings} />;
 
-    if(this.props.usr == null){
-      editArticlePage = <Redirect exact from={config.URL_HOME_PAGE+'/edit-article'} 
-        to={config.URL_HOME_PAGE+'/welcome'} />;
-      newArticlePage = <Redirect exact from={config.URL_HOME_PAGE+'/new-article'} 
-        to={config.URL_HOME_PAGE+'/welcome'} />;
-      editUsers = <Redirect exact from={config.URL_HOME_PAGE+'/user-editor'} 
-        to={config.URL_HOME_PAGE+'/welcome'}/>;
-      pictureManager = <Redirect exact from={config.URL_HOME_PAGE+'/picture-manager'} 
-        to={config.URL_HOME_PAGE+'/welcome'}/>;
-      settings = <Redirect exact from={config.URL_HOME_PAGE+'/settings'} 
-        to={config.URL_HOME_PAGE+'/welcome'}/>;
+    if(this.isUserLogged()){
+      editArticlePage = <Redirect exact
+        from={this.getMountedPageByPath(Path.EDIT_ARTICLE_PAGE)}
+        to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />;
+      
+      newArticlePage = <Redirect exact
+        from={this.getMountedPageByPath(Path.NEW_ARTICLE_PAGE)} 
+        to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />;
+      
+      editUsers = <Redirect exact
+        from={this.getMountedPageByPath(Path.USER_EDITOR_PAGE)}
+        to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />;
+      
+      pictureManager = <Redirect exact
+        from={this.getMountedPageByPath(Path.PICTURE_MANAGER_PAGE)}
+        to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />;
+      
+      settings = <Redirect exact
+        from={this.getMountedPageByPath(Path.SETTINGS_PAGE)}
+        to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />;
 
-    }else if(!util.userHasPermission(this.props.usr, 'ADMIN')){
+    }else if(!util.userHasPermission(this.getUser(), 'ADMIN')){
       editUsers = <Redirect exact from='/user-editor' to='/welcome'/>;
     }
 
@@ -52,14 +70,19 @@ class App extends PureComponent {
       <BrowserRouter>
         <Layout>
           <Switch>
-            <Redirect exact from="/" to={config.URL_HOME_PAGE+'/welcome'} />
-            <Redirect exact from={config.URL_HOME_PAGE+'/'} to={config.URL_HOME_PAGE+'/welcome'} />
+            <Redirect exact
+              from={Path.HOME}
+              to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />
+            
+            <Redirect exact
+              from={this.getMountedPageByPath(Path.HOME)}
+              to={this.getMountedPageByPath(Path.WELCOME_PAGE)} />
 
-            <Route path={config.URL_HOME_PAGE+'/'} exact component={Welcome} />
-            <Route path={config.URL_HOME_PAGE+'/welcome'} exact component={Welcome} />
-            <Route path={config.URL_HOME_PAGE+'/mark-down-help'} exact component={MarkDownHelp} />
-            <Route path={config.URL_HOME_PAGE+'/article'} exact component={Welcome} />
-            <Route path={config.URL_HOME_PAGE+'/article/:tag'} exact component={FullPost} />
+            <Route path={this.getMountedPageByPath(Path.HOME)} exact component={Welcome} />
+            <Route path={this.getMountedPageByPath(Path.WELCOME_PAGE)} exact component={Welcome} />
+            <Route path={this.getMountedPageByPath(Path.MARKDOWN_HELP_PAGE)} exact component={MarkDownHelp} />
+            <Route path={this.getMountedPageByPath(Path.ARTICLE_PAGE)} exact component={Welcome} />
+            <Route path={this.getMountedPageByPath(Path.ARTICLE_BY_TAG_PAGE)}exact component={FullPost} />
             
             {editArticlePage}
             {newArticlePage}
@@ -72,6 +95,18 @@ class App extends PureComponent {
         </Layout>
       </BrowserRouter>
     );
+  }
+
+  getMountedPageByPath(path) {
+    return config.URL_HOME_PAGE + path;
+  }
+
+  isUserLogged() {
+    return this.props.usr === null;
+  }
+
+  getUser() {
+    return this.props.usr
   }
 }
 
@@ -90,5 +125,3 @@ const mapDispathToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispathToProps)(App);
-
-  

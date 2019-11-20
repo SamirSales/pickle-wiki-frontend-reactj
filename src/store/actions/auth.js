@@ -1,7 +1,5 @@
 import * as actionTypes from './actionTypes';
 
-// import { authentication } from '../../axios-orders';
-
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
@@ -25,12 +23,5 @@ export const authFail = (error) => {
 export const auth = (login, password) => {
     return dispatch => {
         dispatch(authStart());
-
-        // const user = {
-        //     login: login,
-        //     password: password
-        // }
-
-        // authentication(user);
     };
 };

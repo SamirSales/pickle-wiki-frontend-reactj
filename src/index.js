@@ -30,7 +30,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const logger = store =>{
+const logger = store => {
     return next =>{
         return action =>{
             // console.log("[Middleware] Dispatching", action);
